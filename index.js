@@ -27,6 +27,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
             return;
         }
     }
+    console.log(reaction.message);
     let discordid = reaction.message.author.id;
     let name = reaction.message.author.name;
     let display_name = reaction.message.author.display_name;
