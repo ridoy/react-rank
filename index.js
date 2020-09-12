@@ -4,6 +4,16 @@ require('dotenv').config()
 
 const client = new Discord.Client();
 const leaderboard = {}
+const pg = require('pg');
+const pgClient = new pg.Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
+
+pgClient.connect();
+
 
 client.login(process.env.TOKEN);
 console.log('running');
@@ -17,13 +27,19 @@ client.on('messageReactionAdd', async (reaction, user) => {
             return;
         }
     }
-    let author = reaction.message.author.username;
-    if (leaderboard[author]) {
-        leaderboard[author] += 1;
-    } else {
-        leaderboard[author] = 1;
-    }
-    console.log(leaderboard);
+    let discordid = reaction.message.author.id;
+    let name = reaction.message.author.name;
+    let display_name = reaciton.message.author.display_name;
+    let query = `INSERT INTO leader (name, discordid, display_name, count) VALUES (${name}, ${discordid}, ${display_name}, 1) ON CONFLICT DO UPDATE SET count = count + 1
+        ;`
+    pgClient.query(query, (err, res) => {
+        if (err) throw err;
+        console.log(JSON.stringify(res));
+        for (let row of res.rows) {
+            console.log(JSON.stringify(row));
+        }
+        pgClient.end();
+    });
 });
 
 const prefix = "!";
@@ -35,6 +51,18 @@ client.on("message", function(message) {
     const args = commandBody.split(' ');
     const command = args.shift().toLowerCase();
     if (command === "reactrank") {
+        let query = `SELECT * FROM leader ORDER BY count LIMIT 3;`
+        pgClient.query(query, (err, res) => {
+            if (err) throw err;
+            for (let row of res.rows) {
+                console.log(JSON.stringify(row));
+            }
+            pgClient.end();
+            let botReply = 'no';
+            message.reply(botReply);
+        });
+    }
+    if (command === "poop") {
         let arr = [];
         for (let key in leaderboard) {
             arr.push([leaderboard[key], key]);
