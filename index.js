@@ -33,7 +33,6 @@ client.on('messageReactionAdd', async (reaction, user) => {
     console.log(query);
     pgClient.query(query, (err, res) => {
         if (err) throw err;
-        console.log(res);
     });
 });
 
