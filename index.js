@@ -32,6 +32,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
     let display_name = reaction.message.author.display_name;
     let query = `INSERT INTO leader (name, discordid, display_name, count) VALUES (${name}, ${discordid}, ${display_name}, 1) ON CONFLICT DO UPDATE SET count = count + 1
         ;`
+    console.log(query);
     pgClient.query(query, (err, res) => {
         if (err) throw err;
         console.log(JSON.stringify(res));
@@ -52,6 +53,7 @@ client.on("message", function(message) {
     const command = args.shift().toLowerCase();
     if (command === "reactrank") {
         let query = `SELECT * FROM leader ORDER BY count LIMIT 3;`
+        console.log(query);
         pgClient.query(query, (err, res) => {
             if (err) throw err;
             for (let row of res.rows) {
