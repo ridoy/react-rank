@@ -68,9 +68,13 @@ client.on("message", function(message) {
         let query = `SELECT * FROM leader WHERE idhash='${idhash}';`
         pgClient.query(query, (err, res) => {
             if (err) throw err;
-            console.log(res.rows);
-            let result = res.rows[0];
-            let str = `Hi ${result.name}, you have received ${result.count} reacts since this bot started counting.`;
+            let str;
+            if (!res.rows.length) {
+                str = `Hi ${message.author.name}, you haven't gotten any reacts yet :'( maybe try being funny?`;
+            } else  {
+                let result = res.rows[0];
+                str = `Hi ${result.name}, you have received ${result.count} reacts since this bot started counting.`;
+            }
             message.channel.send(str);
         });
 
