@@ -60,4 +60,19 @@ client.on("message", function(message) {
             message.channel.send(str);
         });
     }
+
+    if (command === "myrank") {
+        let serverid = message.guild.id;
+        let discordid = message.author.id;
+        let idhash = serverid + discordid + '';
+        let query = `SELECT * FROM leader WHERE idhash='${idhash}';`
+        pgClient.query(query, (err, res) => {
+            if (err) throw err;
+            console.log(res.rows);
+            let result = res.rows[0];
+            let str = `Hi ${result.name}, you have received ${result.count} reacts since this bot started counting.`;
+            message.channel.send(str);
+        });
+
+    }
 });
