@@ -55,7 +55,7 @@ client.on("message", function(message) {
                 i++;
             }
             str += '```';
-            client.message.send(str);
+            message.channel.send(str);
         });
     }
 });
