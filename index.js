@@ -29,7 +29,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
     }
     let discordid = reaction.message.author.id;
     let name = reaction.message.author.name;
-    let display_name = reaciton.message.author.display_name;
+    let display_name = reaction.message.author.display_name;
     let query = `INSERT INTO leader (name, discordid, display_name, count) VALUES (${name}, ${discordid}, ${display_name}, 1) ON CONFLICT DO UPDATE SET count = count + 1
         ;`
     pgClient.query(query, (err, res) => {
