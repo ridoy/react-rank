@@ -45,10 +45,10 @@ client.on("message", function(message) {
     const args = commandBody.split(' ');
     const command = args.shift().toLowerCase();
     if (command === "reactrank") {
-        let query = `SELECT * FROM leader ORDER BY count DESC LIMIT 3;`
+        let query = `SELECT * FROM leader ORDER BY count DESC LIMIT 5;`
         pgClient.query(query, (err, res) => {
             if (err) throw err;
-            let i = 0;
+            let i = 1;
             let str = '';
             for (let row of res.rows) {
                 str += `${i}. ${row['name']} with ${row['count']} reacts\n`;
