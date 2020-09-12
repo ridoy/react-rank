@@ -27,17 +27,13 @@ client.on('messageReactionAdd', async (reaction, user) => {
             return;
         }
     }
-    console.log(reaction.message);
     let discordid = reaction.message.author.id;
     let name = reaction.message.author.username;
     let query = `INSERT INTO leader (name, discordid, count) VALUES ('${name}', '${discordid}', 1) ON CONFLICT (discordid) DO UPDATE SET count = leader.count + 1;`
     console.log(query);
     pgClient.query(query, (err, res) => {
         if (err) throw err;
-        console.log(JSON.stringify(res));
-        for (let row of res.rows) {
-            console.log(JSON.stringify(row));
-        }
+        console.log(res);
     });
 });
 
@@ -50,43 +46,16 @@ client.on("message", function(message) {
     const args = commandBody.split(' ');
     const command = args.shift().toLowerCase();
     if (command === "reactrank") {
-        let query = `SELECT * FROM leader ORDER BY count LIMIT 3;`
-        console.log(query);
+        let query = `SELECT * FROM leader ORDER BY count DESC LIMIT 3;`
         pgClient.query(query, (err, res) => {
             if (err) throw err;
+            const i = 0;
+            let str = '';
             for (let row of res.rows) {
-                console.log(JSON.stringify(row));
-            }
-            let botReply = 'no';
-            message.reply(botReply);
-        });
-    }
-    if (command === "poop") {
-        let arr = [];
-        for (let key in leaderboard) {
-            arr.push([leaderboard[key], key]);
-        }
-        console.log(arr);
-        arr.sort((a,b) => { return b[0] - a[0] });
-        console.log(arr);
-
-        let botReply = "";
-        let ranks = ""
-        if (arr.length < 3) {
-            let i = 1;
-            for (let item of arr)  {
-                ranks += `${i}. ${item[1]} with ${item[0]} reacts\n`
+                str += `${i}. ${row['name']} with ${row['count']} reacts\n`;
                 i++;
             }
-        } else {
-            let first = arr[0]
-            let second = arr[1]
-            let third = arr[2]
-            ranks += `1. ${first[1]} with ${first[0]} reacts\n`
-            ranks += `2. ${second[1]} with ${second[0]} reacts\n`
-            ranks += `3. ${third[1]} with ${third[0]} reacts`
-        }
-        botReply = `The leaders of this server are:\n ${ranks}`
-        message.reply(botReply);
+            message.reply(str);
+        });
     }
 });
