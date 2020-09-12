@@ -49,12 +49,13 @@ client.on("message", function(message) {
         pgClient.query(query, (err, res) => {
             if (err) throw err;
             let i = 1;
-            let str = '';
+            let str = '```\nTHE LEADERBOARD!!!';
             for (let row of res.rows) {
                 str += `${i}. ${row['name']} with ${row['count']} reacts\n`;
                 i++;
             }
-            message.reply(str);
+            str += '```';
+            client.message.send(str);
         });
     }
 });
