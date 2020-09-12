@@ -48,7 +48,7 @@ client.on("message", function(message) {
         let query = `SELECT * FROM leader ORDER BY count DESC LIMIT 3;`
         pgClient.query(query, (err, res) => {
             if (err) throw err;
-            const i = 0;
+            let i = 0;
             let str = '';
             for (let row of res.rows) {
                 str += `${i}. ${row['name']} with ${row['count']} reacts\n`;
