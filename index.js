@@ -27,9 +27,10 @@ client.on('messageReactionAdd', async (reaction, user) => {
             return;
         }
     }
+    let serverid = reaction.message.guild.id;
     let discordid = reaction.message.author.id;
     let name = reaction.message.author.username;
-    let query = `INSERT INTO leader (name, discordid) VALUES ('${name}', '${discordid}') ON CONFLICT (discordid) DO UPDATE SET count = leader.count + 1;`
+    let query = `INSERT INTO leader (name, discordid, serverid) VALUES ('${name}', '${discordid}', '${serverid}') ON CONFLICT (discordid) DO UPDATE SET count = leader.count + 1;`
     console.log(query);
     pgClient.query(query, (err, res) => {
         if (err) throw err;
@@ -44,8 +45,9 @@ client.on("message", function(message) {
     const commandBody = message.content.slice(prefix.length);
     const args = commandBody.split(' ');
     const command = args.shift().toLowerCase();
+    console.log(message);
     if (command === "reactrank") {
-        let query = `SELECT * FROM leader ORDER BY count DESC LIMIT 5;`
+        let query = `SELECT * FROM leader WHERE serverid='${message.guild.id}' ORDER BY count DESC LIMIT 5;`
         pgClient.query(query, (err, res) => {
             if (err) throw err;
             let i = 1;
