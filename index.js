@@ -38,7 +38,6 @@ client.on('messageReactionAdd', async (reaction, user) => {
         for (let row of res.rows) {
             console.log(JSON.stringify(row));
         }
-        pgClient.end();
     });
 });
 
@@ -58,7 +57,6 @@ client.on("message", function(message) {
             for (let row of res.rows) {
                 console.log(JSON.stringify(row));
             }
-            pgClient.end();
             let botReply = 'no';
             message.reply(botReply);
         });
