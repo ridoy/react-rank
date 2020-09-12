@@ -77,6 +77,17 @@ client.on("message", function(message) {
             }
             message.channel.send(str);
         });
+    }
 
+    if (command === "clearmyreacts") {
+        let serverid = message.guild.id;
+        let discordid = message.author.id;
+        let idhash = serverid + discordid + '';
+        let query = `UPDATE TABLE leader SET count = 0 where idhash='${idhash}'`
+        pgClient.query(query, (err, res) => {
+            if (err) throw err;
+            let str = `Why would you do this? Anyway, your react count is 0 now.`;
+            message.channel.send(str);
+        });
     }
 });
