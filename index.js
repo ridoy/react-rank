@@ -1,11 +1,13 @@
 'use strict';
 const Discord = require("discord.js");
-const config = require("./config.json");
+require('dotenv').config()
 
 const client = new Discord.Client();
 const leaderboard = {}
 
-client.login(config.BOT_TOKEN);
+client.login(process.env.TOKEN);
+console.log('running');
+
 client.on('messageReactionAdd', async (reaction, user) => {
     if (reaction.partial) {
         try {
