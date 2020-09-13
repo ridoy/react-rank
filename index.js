@@ -11,6 +11,7 @@ const pgClient = new pg.Client({
         rejectUnauthorized: false
     }
 });
+const prefix = "!";
 
 pgClient.connect();
 
@@ -18,6 +19,7 @@ pgClient.connect();
 client.login(process.env.TOKEN);
 console.log('running');
 
+// Listen for reaction adds
 client.on('messageReactionAdd', async (reaction, user) => {
     if (reaction.partial) {
         try {
@@ -38,7 +40,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
     });
 });
 
-const prefix = "!";
+// Respond to commands
 client.on("message", function(message) {
     if (message.author.bot) return;
     if (!message.content.startsWith(prefix)) return;
@@ -47,18 +49,34 @@ client.on("message", function(message) {
     const args = commandBody.split(' ');
     const command = args.shift().toLowerCase();
     if (command === "reactrank") {
-        let query = `SELECT * FROM leader WHERE serverid='${message.guild.id}' ORDER BY count DESC LIMIT 5;`
-        pgClient.query(query, (err, res) => {
-            if (err) throw err;
-            let i = 1;
-            let str = '```\nTHE LEADERBOARD!!!\n';
-            for (let row of res.rows) {
-                str += `${i}. ${row['name']} with ${row['count']} reacts\n`;
-                i++;
+        if (args[0]) {
+            const user = getUserFromMention(args[0]);
+            if (!user) {
+                return message.reply(`${args[0]} isn't a real user.`);
             }
-            str += '```';
-            message.channel.send(str);
-        });
+            console.log(user);
+            let query = `SELECT * FROM leader WHERE name='${user.username}' AND serverid='${message.guild.id}';`
+            pgClient.query(query, (err, res) => {
+                if (err) throw err;
+                if (res.rows.length === 0) { return message.channel.send('Yeah couldn\'t find that user idk sorry'); }
+                let result = res.rows[0];
+                let str = `well okay ${user.username} only has ${result.count} reacts but that doesn't make them a bad person`;
+                return message.channel.send(str);
+            });
+        } else {
+            let query = `SELECT * FROM leader WHERE serverid='${message.guild.id}' ORDER BY count DESC LIMIT 5;`
+            pgClient.query(query, (err, res) => {
+                if (err) throw err;
+                let i = 1;
+                let str = '```\nTHE LEADERBOARD!!!\n';
+                for (let row of res.rows) {
+                    str += `${i}. ${row['name']} with ${row['count']} reacts\n`;
+                    i++;
+                }
+                str += '```';
+                return message.channel.send(str);
+            });
+        }
     }
 
     if (command === "myrank") {
@@ -96,3 +114,18 @@ client.on("message", function(message) {
         });
     }
 });
+
+function getUserFromMention(mention) {
+    if (!mention) return;
+
+    if (mention.startsWith('<@') && mention.endsWith('>')) {
+        mention = mention.slice(2, -1);
+
+        if (mention.startsWith('!')) {
+            mention = mention.slice(1);
+        }
+
+        console.log(client.users);
+        return client.users.cache.get(mention);
+    }
+}
