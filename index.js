@@ -70,7 +70,7 @@ client.on("message", function(message) {
             if (err) throw err;
             let str;
             if (!res.rows.length) {
-                str = `Hi ${message.author.name}, you haven't gotten any reacts yet :'( maybe try being funny?`;
+                str = `Hi ${message.author.username}, you haven't gotten any reacts yet :'( maybe try being funny?`;
             } else  {
                 let result = res.rows[0];
                 if (result.count === 0) {
