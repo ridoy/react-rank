@@ -54,7 +54,7 @@ client.on("message", function(message) {
             if (!user) {
                 return message.reply(`${args[0]} isn't a real user.`);
             }
-            let query = `SELECT * FROM leader WHERE name='${user.username}' AND serverid='${message.guild.id}';`
+            let query = `SELECT * FROM leader WHERE discordid='${user.id}' AND serverid='${message.guild.id}';`
             pgClient.query(query, (err, res) => {
                 if (err) throw err;
                 if (res.rows.length === 0) { return message.channel.send(`${user.username} has NO REACTS LMAO!!!!!!!!!!`); }
