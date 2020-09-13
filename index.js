@@ -54,11 +54,10 @@ client.on("message", function(message) {
             if (!user) {
                 return message.reply(`${args[0]} isn't a real user.`);
             }
-            console.log(user);
             let query = `SELECT * FROM leader WHERE name='${user.username}' AND serverid='${message.guild.id}';`
             pgClient.query(query, (err, res) => {
                 if (err) throw err;
-                if (res.rows.length === 0) { return message.channel.send(`${user.username}has NO REACTS LMAO!!!!!!!!!!`); }
+                if (res.rows.length === 0) { return message.channel.send(`${user.username} has NO REACTS LMAO!!!!!!!!!!`); }
                 let result = res.rows[0];
                 let str = `well okay ${user.username} only has ${result.count} reacts but that doesn't make them a bad person`;
                 return message.channel.send(str);
@@ -125,7 +124,6 @@ function getUserFromMention(mention) {
             mention = mention.slice(1);
         }
 
-        console.log(client.users);
         return client.users.cache.get(mention);
     }
 }
