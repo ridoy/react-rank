@@ -74,7 +74,7 @@ client.on("message", function(message) {
             } else  {
                 let result = res.rows[0];
                 if (result.count === 0) {
-                    str = `Wow you suck you have 0 reacts`;
+                    str = `Wow you haven't gotten any reacts yet. Incel`;
                 } else  {
                     str = `Hi ${result.name}, you have received ${result.count} reacts since this bot started counting.`;
                 }
