@@ -63,7 +63,7 @@ client.on("message", function(message) {
                 return message.channel.send(str);
             });
         } else {
-            let query = `SELECT * FROM leader WHERE serverid='${message.guild.id}' ORDER BY count DESC LIMIT 5;`
+            let query = `SELECT * FROM leader WHERE serverid='${message.guild.id}' ORDER BY count DESC LIMIT 10;`
             pgClient.query(query, (err, res) => {
                 if (err) throw err;
                 let i = 1;
