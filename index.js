@@ -33,9 +33,10 @@ client.on('messageReactionAdd', async (reaction, user) => {
     let discordid = reaction.message.author.id;
     let name = reaction.message.author.username;
     let idhash = serverid + discordid + '';
-    let query = `INSERT INTO leader (name, discordid, serverid, idhash) VALUES ('${name}', '${discordid}', '${serverid}', '${idhash}') ON CONFLICT (idhash) DO UPDATE SET count = leader.count + 1;`
+    let query = `INSERT INTO leader (name, discordid, serverid, idhash) VALUES ($1, $2, $3, $4) ON CONFLICT (idhash) DO UPDATE SET count = leader.count + 1;`
+    let values = [name, discordid, serverid, idhash];
     console.log(`${name} got a react`);
-    pgClient.query(query, (err, res) => {
+    pgClient.query(query, values, (err, res) => {
         if (err) throw err;
     });
 });
