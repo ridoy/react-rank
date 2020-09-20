@@ -55,8 +55,9 @@ client.on("message", function(message) {
             if (!user) {
                 return message.reply(`${args[0]} isn't a real user.`);
             }
-            let query = `SELECT * FROM leader WHERE discordid='${user.id}' AND serverid='${message.guild.id}';`
-            pgClient.query(query, (err, res) => {
+            let query = `SELECT * FROM leader WHERE discordid=$1 AND serverid=$2;`
+            let values = [user.id, message.guild.id];
+            pgClient.query(query, values, (err, res) => {
                 if (err) throw err;
                 if (res.rows.length === 0) { return message.channel.send(`${user.username} has NO REACTS LMAO!!!!!!!!!!`); }
                 let result = res.rows[0];
@@ -64,8 +65,9 @@ client.on("message", function(message) {
                 return message.channel.send(str);
             });
         } else {
-            let query = `SELECT * FROM leader WHERE serverid='${message.guild.id}' ORDER BY count DESC LIMIT 10;`
-            pgClient.query(query, (err, res) => {
+            let query = `SELECT * FROM leader WHERE serverid=$1 ORDER BY count DESC LIMIT 10;`
+            let values = [message.guild.id];
+            pgClient.query(query, values, (err, res) => {
                 if (err) throw err;
                 let i = 1;
                 let str = '```\nTHE LEADERBOARD!!!\n';
@@ -83,8 +85,9 @@ client.on("message", function(message) {
         let serverid = message.guild.id;
         let discordid = message.author.id;
         let idhash = serverid + discordid + '';
-        let query = `SELECT * FROM leader WHERE idhash='${idhash}';`
-        pgClient.query(query, (err, res) => {
+        let query = `SELECT * FROM leader WHERE idhash=$1;`
+        let values = [idhash];
+        pgClient.query(query, values, (err, res) => {
             if (err) throw err;
             let str;
             if (!res.rows.length) {
@@ -106,8 +109,9 @@ client.on("message", function(message) {
         let serverid = message.guild.id;
         let discordid = message.author.id;
         let idhash = serverid + discordid + '';
-        let query = `UPDATE leader SET count = 0 where idhash='${idhash}'`
-        pgClient.query(query, (err, res) => {
+        let query = `UPDATE leader SET count = 0 where idhash=$1`
+        let values = [idhash];
+        pgClient.query(query, values, (err, res) => {
             if (err) throw err;
             let str = `Why would you do this? Anyway, your react count is 0 now.`;
             message.channel.send(str);
