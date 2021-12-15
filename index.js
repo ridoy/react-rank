@@ -2,6 +2,8 @@
 const Discord = require("discord.js");
 require('dotenv').config()
 
+// test
+
 const client = new Discord.Client();
 const leaderboard = {}
 const pg = require('pg');
